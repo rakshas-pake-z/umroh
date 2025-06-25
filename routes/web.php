@@ -12,12 +12,5 @@ Route::get('/login', function () {
 
 Route::post('/login', [AuthController::class, 'login'])->name('post.login');
 
-Route::get('/form', function () {
-    return view('form');
-})->name('masuk');
-
 Route::resource('paket', PaketController::class);
 Route::resource('umroh', FormUmrohController::class);
-Route::post('umroh/userform', [FormUmrohController::class, 'submitForm'])->name('form.submit');
-
-Route::get('/form', [FormUmrohController::class, 'index']);

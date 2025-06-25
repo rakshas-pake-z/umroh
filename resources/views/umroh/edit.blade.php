@@ -11,8 +11,9 @@
         <div class="navbar">
             <a href="account">account</a>
         </div>
-        <form action="{{ route('form.submit') }}" method="post">
+        <form action="{{ route('umroh.update', $data->id) }}" method="post">
           @csrf
+          @method('PUT')
           <div class="form-container">
           <div class="selection">
             <label for="select">Pilih Pendaftaran</label>
@@ -27,45 +28,49 @@
             <select name="paket_id" required>
                 <option disabled selected hidden>Select option</option>
                 @foreach ($paket as $p)
-                  <option value="{{ $p->id }}">{{ $p->nama }}</option>
+                  @if ($p->id === $data->Paket->id)
+                    <option selected value="{{ $p->id }}">{{ $p->nama }}</option>
+                  @else
+                    <option value="{{ $p->id }}">{{ $p->nama }}</option>
+                  @endif
                 @endforeach
             </select>
           </div>
           <div class="tgl-daftar">
             <label for="">Tgl Daftar</label>
-            <input type="date" name="tgl_daftar">
+            <input type="date" name="tgl_daftar" required value="{{ $data->tgl_daftar }}">
           </div>
           <div class="nama">
             <label for="">Nama</label>
-            <input type="text" name="nama">
+            <input type="text" name="nama" required value="{{ $data->nama }}">
           </div>
           <div class="alamat">
             <label for="">Alamat</label>
-            <input type="text" name="alamat">
+            <input type="text" name="alamat" required value="{{ $data->alamat }}">
           </div>
           <div class="email">
             <label for="">Email</label>
-            <input type="email" name="email">
+            <input type="email" name="email" required value="{{ $data->email }}">
           </div>
           <div class="no-telp">
             <label for="">No Telpon</label>
-            <input type="number" name="no_hp">
+            <input type="number" name="no_hp" required value="{{ $data->no_hp }}">
           </div>
           <div class="tgl-berangkat">
             <label for="">Tgl Berangkat</label>
-            <input type="date" name="tgl_berangkat">
+            <input type="date" name="tgl_berangkat" required value="{{ $data->tgl_berangkat }}">
           </div>
           <div class="room">
             <label for="">room</label>
-            <input type="text" name="room">
+            <input type="text" name="room" required value="{{ $data->room }}">
           </div>
           <div class="jml-jamaah">
             <label for="">Jumlah Jamaah</label>
-            <input type="number" name="jml_jamaah" required>
+            <input type="number" name="jml_jamaah" required value="{{ $data->jml_jamaah }}">
           </div>
           <div class="keterangan">
           <label for="">Keterangan</label>
-          <textarea name="keterangan" rows="4" placeholder="Tulis keterangan jika ada..."></textarea>
+          <textarea name="keterangan" rows="4" placeholder="Tulis keterangan jika ada...">{{ $data->keterangan }}</textarea>
           </div>
           <div class="button1">
             <button type="submit">Submit</button>

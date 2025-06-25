@@ -9,31 +9,100 @@ use Illuminate\Support\Facades\DB;
 
 class FormUmrohController extends Controller
 {
+    // READ - Tampilkan semua data
     public function index()
     {
-        $paket = Paket::all();
-        return view('form', ['paket' => $paket]);
+        $umroh = FormUmroh::with('Paket')->get();
+        return view('umroh.index', ['data' => $umroh]);
     }
 
-    public function submitForm(Request $request)
+    // CREATE - Tampilkan form
+    public function create()
+    {
+        $paket = Paket::all();
+        return view('umroh.store', ['paket' => $paket]);
+    }
+
+    // STORE - Simpan data baru
+    public function store(Request $request)
     {
         $validated = $request->validate([
-            'tgl_daftar'    => 'required|date',
-            'nama'          => 'required|string',
-            'alamat'        => 'required|string',
-            'email'         => 'required|email',
-            'no_hp'         => 'required|string',
+            'selection' => 'required',
+            'paket_id' => 'required|exists:paket,id',
+            'tgl_daftar' => 'required|date',
+            'nama' => 'required|string',
+            'alamat' => 'required|string',
+            'email' => 'required|email',
+            'no_hp' => 'required|string',
             'tgl_berangkat' => 'required|date',
-            'jml_jamaah'    => 'required|integer',
-            'keterangan'    => 'nullable|string',
-            'room'          => 'required|string',
-            'paket_id'      => 'required|integer',
+            'room' => 'required|string',
+            'jml_jamaah' => 'required|numeric',
+            'keterangan' => 'nullable|string'
         ]);
 
         $validated['keterangan'] = $validated['keterangan'] ?? '-';
 
         FormUmroh::create($validated);
 
-        return redirect()->back()->with('success', 'Form berhasil disimpan.');
+        return redirect()->route('umroh.index')->with('success', 'Data berhasil ditambahkan');
+    }
+
+    // SHOW - Tampilkan detail data
+    public function show(string $id)
+    {
+        $data = FormUmroh::with('paket')->findOrFail($id);
+        return view('umroh.show', compact('data'));
+    }
+
+    // EDIT - Tampilkan form edit
+    public function edit(string $id)
+    {
+        $data = FormUmroh::with('Paket')->findOrFail($id);
+        $paket = Paket::all();
+        return view('umroh.edit', compact('data', 'paket'));
+    }
+
+    // UPDATE - Simpan perubahan
+    public function update(Request $request, string $id)
+    {
+        $data = FormUmroh::findOrFail($id);
+        
+        $request->validate([
+            'paket_id' => 'required|exists:paket,id',
+            'tgl_daftar' => 'required|date',
+            'nama' => 'required|string',
+            'alamat' => 'required|string',
+            'email' => 'required|email',
+            'no_hp' => 'required|string',
+            'tgl_berangkat' => 'required|date',
+            'room' => 'required|string',
+            'jml_jamaah' => 'required|numeric',
+            'keterangan' => 'nullable|string'
+        ]);
+
+        $data->update($request->only([
+            'tgl_daftar',
+            'paket_id',
+            'nama',
+            'alamat',
+            'email',
+            'no_hp',
+            'tgl_berangkat',
+            'jml_jamaah',
+            'keterangan',
+            'room'
+        ]));
+
+
+        return redirect()->route('umroh.index')->with('success', 'Data berhasil diupdate');
+    }
+
+    // DELETE - Hapus data
+    public function destroy(string $id)
+    {
+        $data = FormUmroh::findOrFail($id);
+        $data->delete();
+
+        return redirect()->route('umroh.index')->with('success', 'Data berhasil dihapus');
     }
 }
